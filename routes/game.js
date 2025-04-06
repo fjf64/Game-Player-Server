@@ -1,41 +1,42 @@
-var express = require('express');
-var axios = require('axios')
-var router = express.Router();
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 
-/* GET users listing. */
-// router.get('/game',(req,res)=>{
-  // res.set('Access-Control-Allow-Origin', '*');
-  // res.json(colors)
-// })
-// router.use(bodyParser.json());
+const router = express.Router();
+
+// Middleware
+router.use(cors()); // This handles CORS properly
 router.use(express.json());
-router.use(express.urlencoded({
-  extended: false
-}));
+router.use(express.urlencoded({ extended: true }));
 
+// Preflight handling (optional, but good if you're debugging)
+router.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+})); // Handles OPTIONS requests
+
+// Main POST handler
 router.post('/', async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.set('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    console.log(req.body);
-    var postData = req.body;
-    console.log(postData);
-    if (postData == {}) {return}
-      var response = await axios({
-        method: 'get',
-        url: postData.newUrl,
-        // url: `https://www.jigsawexplorer.com/`,
-        withCredentials: false,
-        // params: {
-          // access_token: SECRET_TOKEN,
-        // },
-      });
-      res.send(response.data);
-      // console.log(response.data)
-  // } catch (error) {
-  //     res.status(500).send('Error fetching iframe content');
-  // }
+  try {
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+
+    const { newUrl } = req.body;
+    if (!newUrl) {
+      console.log('Missing newUrl');
+      return res.status(400).json({ error: 'newUrl is required' });
+    }
+
+    const response = await axios.get(newUrl, {
+      withCredentials: false,
+    });
+
+    res.send(response.data);
+  } catch (error) {
+    console.error('Error fetching URL:', error.message);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
 });
+
 module.exports = router;

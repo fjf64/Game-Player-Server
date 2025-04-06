@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
     if (postData == {}) {return}
       var response = await axios({
         method: 'get',
-        url: postData,
+        url: postData.newUrl,
         // url: `https://www.jigsawexplorer.com/`,
         withCredentials: false,
         // params: {

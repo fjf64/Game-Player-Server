@@ -19,8 +19,8 @@ router.use(cors({
 // Main POST handler
 router.post('/', async (req, res) => {
   try {
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
+    // console.log('Headers:', req.headers);
+    // console.log('Body:', req.body);
 
     const { newUrl } = req.body;
     if (!newUrl) {
